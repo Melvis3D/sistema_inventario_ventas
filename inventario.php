@@ -49,6 +49,10 @@ tr:hover { background-color: #f8fafc; }
 <div class="container">
 <div class="header">
     <h2>Catálogo de Inventario</h2>
+    <button>
+        <a href="nuevo_producto.php" style="background: #3b82f6; color: white; padding: 10px;
+text-decoration: none; border-radius: 5px;">+ Nuevo Producto</a>
+</button>
 <div>
 <span>Usuario: <strong><?php echo $_SESSION['nombre']; ?></strong></span>
 <a href="logout.php" class="btn-salir">Cerrar Sesión</a>
