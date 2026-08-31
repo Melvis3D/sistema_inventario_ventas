@@ -9,15 +9,32 @@ if (!isset($_SESSION['user_id'])) {
 // 2. Incluir la conexión a la base de datos
 require_once 'conexion.php';
 
-// 3. Consultar la lista de productos relacional con categorías
-$sql = "SELECT p.id, p.nombre_producto, c.nombre_categoria, p.stock, p.precio
-        FROM productos p
-        INNER JOIN categorias c ON p.categoria_id = c.id
-        ORDER BY p.id ASC";
+// 3. Capturar término de búsqueda si existe
+$busqueda = trim($_GET['buscar'] ?? '');
 
-$resultado = $conn->query($sql);
+// 4. Preparar y ejecutar la consulta con o sin filtro de búsqueda
+if ($busqueda !== '') {
+    $sql = "SELECT p.id, p.nombre_producto, c.nombre_categoria, p.stock, p.precio
+            FROM productos p
+            INNER JOIN categorias c ON p.categoria_id = c.id
+            WHERE p.nombre_producto LIKE ? OR c.nombre_categoria LIKE ?
+            ORDER BY p.id ASC";
+            
+    $stmt = $conn->prepare($sql);
+    $param_busqueda = "%" . $busqueda . "%";
+    $stmt->bind_param("ss", $param_busqueda, $param_busqueda);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    $stmt->close();
+} else {
+    $sql = "SELECT p.id, p.nombre_producto, c.nombre_categoria, p.stock, p.precio
+            FROM productos p
+            INNER JOIN categorias c ON p.categoria_id = c.id
+            ORDER BY p.id ASC";
+    $resultado = $conn->query($sql);
+}
 
-// 4. Calcular estadísticas básicas para las tarjetas informativas
+// 5. Recopilar datos e indicadores de resumen
 $total_productos = 0;
 $valor_total = 0;
 $stock_bajo_count = 0;
@@ -158,12 +175,32 @@ body {
     border-bottom: 2px solid #f1f5f9;
     padding-bottom: 15px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .header-actions h2 {
     margin: 0;
     font-size: 20px;
     color: #0f172a;
+}
+
+.btn-dashboard {
+    background-color: #64748b;
+    color: white;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.btn-dashboard:hover {
+    background-color: #475569;
 }
 
 .btn-nuevo {
@@ -182,6 +219,63 @@ body {
 
 .btn-nuevo:hover {
     background-color: #1d4ed8;
+}
+
+/* Estilos de Formulario de Búsqueda */
+.search-form {
+    margin-bottom: 25px;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-box input[type="text"] {
+    flex: 1;
+    padding: 11px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.search-box input[type="text"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.btn-search {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-search:hover {
+    background-color: #059669;
+}
+
+.btn-clear {
+    background-color: #64748b;
+    color: white;
+    text-decoration: none;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.btn-clear:hover {
+    background-color: #475569;
 }
 
 /* Estilos de Tabla */
@@ -303,13 +397,30 @@ tr:hover {
         </div>
     </div>
 
+    <!-- Catálogo de Productos -->
+    <div class="main-card">
         <div class="header-actions">
             <h2>Catálogo de Inventario</h2>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <a href="dashboard.php" class="btn-dashboard" style="background-color: #64748b; color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.2s;">📊 Volver al Dashboard</a>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <a href="dashboard.php" class="btn-dashboard">📊 Volver al Dashboard</a>
                 <a href="nuevo_producto.php" class="btn-nuevo">➕ Registrar Producto</a>
             </div>
         </div>
+
+        <!-- Formulario de Búsqueda -->
+        <form method="GET" action="inventario.php" class="search-form">
+            <div class="search-box">
+                <input type="text" 
+                       name="buscar" 
+                       placeholder="Buscar por nombre de producto o categoría..." 
+                       value="<?php echo htmlspecialchars($busqueda); ?>" 
+                       autocomplete="off">
+                <button type="submit" class="btn-search">🔍 Buscar</button>
+                <?php if ($busqueda !== ''): ?>
+                    <a href="inventario.php" class="btn-clear">Limpiar</a>
+                <?php endif; ?>
+            </div>
+        </form>
 
         <table>
             <thead>
@@ -351,8 +462,13 @@ tr:hover {
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #64748b; padding: 30px;">
-                            No hay productos registrados en el sistema.
+                        <td colspan="6" style="text-align: center; color: #64748b; padding: 35px;">
+                            <?php if ($busqueda !== ''): ?>
+                                🔍 No se encontraron productos que coincidan con la búsqueda "<strong><?php echo htmlspecialchars($busqueda); ?></strong>". <br>
+                                <a href="inventario.php" style="color: #2563eb; text-decoration: underline; margin-top: 8px; display: inline-block;">Ver todo el inventario</a>
+                            <?php else: ?>
+                                No hay productos registrados en el sistema.
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endif; ?>
