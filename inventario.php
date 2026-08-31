@@ -234,6 +234,28 @@ tr:hover {
     display: inline-block;
 }
 
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-editar {
+    background-color: #fef3c7;
+    color: #92400e;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-editar:hover {
+    background-color: #f59e0b;
+    color: white;
+}
+
 .btn-eliminar {
     background-color: #fee2e2;
     color: #991b1b;
@@ -315,11 +337,14 @@ tr:hover {
                             </td>
                             <td><strong>$<?php echo number_format($fila['precio'], 2); ?></strong></td>
                             <td>
-                                <a href="eliminar_producto.php?id=<?php echo $fila['id']; ?>" 
-                                   class="btn-eliminar"
-                                   onclick="return confirm('¿Estás seguro de eliminar el producto: <?php echo htmlspecialchars($fila['nombre_producto'], ENT_QUOTES); ?>?');">
-                                   🗑️ Eliminar
-                                </a>
+                                <div class="action-buttons">
+                                    <a href="editar_producto.php?id=<?php echo $fila['id']; ?>" class="btn-editar">✏️ Editar</a>
+                                    <a href="eliminar_producto.php?id=<?php echo $fila['id']; ?>" 
+                                       class="btn-eliminar"
+                                       onclick="return confirm('¿Estás seguro de eliminar el producto: <?php echo htmlspecialchars($fila['nombre_producto'], ENT_QUOTES); ?>?');">
+                                       🗑️ Eliminar
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
