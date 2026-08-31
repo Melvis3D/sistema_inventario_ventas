@@ -209,6 +209,34 @@ body {
     background-color: #f1f5f9;
     color: #475569;
 }
+
+/* Menú de Módulos */
+.menu-modulos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.modulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.modulo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.15);
+    filter: brightness(1.05);
+}
 </style>
 </head>
 <body>
@@ -279,6 +307,12 @@ body {
             <div class="status-badge">&lt; 10 unidades</div>
         </div>
 
+    </div>
+
+    <!-- Menú de Módulos -->
+    <div class="menu-modulos">
+        <a href="inventario.php" class="modulo" style="background:#2563eb;">📦 Módulo de Inventario</a>
+        <a href="proveedores.php" class="modulo" style="background:#8b5cf6;">🚚 Módulo de Proveedores</a>
     </div>
 
 </div>
