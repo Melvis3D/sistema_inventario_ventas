@@ -303,11 +303,12 @@ tr:hover {
         </div>
     </div>
 
-    <!-- Catálogo de Productos -->
-    <div class="main-card">
         <div class="header-actions">
             <h2>Catálogo de Inventario</h2>
-            <a href="nuevo_producto.php" class="btn-nuevo">➕ Registrar Producto</a>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="dashboard.php" class="btn-dashboard" style="background-color: #64748b; color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.2s;">📊 Volver al Dashboard</a>
+                <a href="nuevo_producto.php" class="btn-nuevo">➕ Registrar Producto</a>
+            </div>
         </div>
 
         <table>
