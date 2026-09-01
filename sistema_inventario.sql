@@ -72,3 +72,48 @@ SELECT c.nombre_categoria, SUM(p.stock) AS existencias_totales
 FROM productos p
 INNER JOIN categorias c ON p.categoria_id = c.id
 GROUP BY c.nombre_categoria;
+
+CREATE TABLE proveedores (
+id INT AUTO_INCREMENT PRIMARY KEY,
+nombre_empresa VARCHAR(100) NOT NULL,
+contacto VARCHAR(100),
+telefono VARCHAR(20),
+direccion TEXT
+);
+INSERT INTO proveedores (nombre_empresa, contacto, telefono, direccion) VALUES
+('Tech Data El Salvador', 'Juan Pérez', '2255-8899', 'San Salvador, Col. Escalón'),
+('Distribuidora de Papel', 'María Gómez', '2666-4433', 'San Miguel, Centro');
+
+-- ====================================================================
+-- MÓDULO DE COMPRAS: ARQUITECTURA MAESTRO-DETALLE (Guía 23)
+-- ====================================================================
+
+-- 1. Tabla Maestra de Compras (Cabecera de Factura)
+CREATE TABLE compras (
+id INT AUTO_INCREMENT PRIMARY KEY,
+proveedor_id INT NOT NULL,
+usuario_id INT NOT NULL,
+fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+total DECIMAL(10, 2) NOT NULL,
+FOREIGN KEY (proveedor_id) REFERENCES proveedores(id),
+FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- 2. Tabla Detalle de Compras (Líneas de los productos ingresados)
+CREATE TABLE detalle_compras (
+id INT AUTO_INCREMENT PRIMARY KEY,
+compra_id INT NOT NULL,
+producto_id INT NOT NULL,
+cantidad INT NOT NULL,
+precio_compra DECIMAL(10, 2) NOT NULL,
+FOREIGN KEY (compra_id) REFERENCES compras(id),
+FOREIGN KEY (producto_id) REFERENCES productos(id)
+);
+-- Primero, creamos la Cabecera de la factura en la tabla maestra
+INSERT INTO compras (proveedor_id, usuario_id, total) VALUES (1, 1, 735.00);
+
+-- Ahora, insertamos los detalles asociados a la compra número 1
+INSERT INTO detalle_compras (compra_id, producto_id, cantidad, precio_compra) VALUES (1,
+1, 1, 720.00);
+INSERT INTO detalle_compras (compra_id, producto_id, cantidad, precio_compra) VALUES (1,
+2, 1, 15.00);
