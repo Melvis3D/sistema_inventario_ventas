@@ -315,6 +315,7 @@ body {
         <a href="inventario.php" class="modulo" style="background:#2563eb;">📦 Módulo de Inventario</a>
         <a href="proveedores.php" class="modulo" style="background:#8b5cf6;">🚚 Módulo de Proveedores</a>
         <a href="nueva_compra.php" class="modulo" style="background:#10b981;">📥 Registrar Ingreso de Mercadería</a>
+        <a href="historial_compras.php" class="modulo" style="background:#0284c7;">📋 Historial de Compras</a>
     </div>
 
 </div>
