@@ -261,9 +261,8 @@ body {
         </div>
         <a href="inventario.php" class="btn-ir-inventario">
             📦 Ir al Catálogo de Inventario →
-        </a>\
-        <a href="nueva_compra.php" class="modulo" style="background:#10b981;">📥 Registrar
-Ingreso de Mercadería</a>
+        </a>
+        <a href="nueva_compra.php" class="modulo" style="background:#10b981;">📥 Registrar Ingreso de Mercadería</a>
     </div>
 
     <!-- Grid de Tarjetas Numéricas -->
