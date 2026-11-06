@@ -6,12 +6,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 require_once 'conexion.php';
 
-$sql = "SELECT c.id AS numero_factura, c.fecha, p.nombre_empresa AS proveedor,
-u.nombre_completo AS cajero, c.total
+$sql = "SELECT c.id AS numero_factura, c.fecha, c.total, c.estado, p.nombre_empresa AS proveedor, u.nombre_completo AS usuario
 FROM compras c
 INNER JOIN proveedores p ON c.proveedor_id = p.id
 INNER JOIN usuarios u ON c.usuario_id = u.id
-ORDER BY c.id DESC";
+ORDER BY c.fecha DESC";
 
 $resultado = $conn->query($sql);
 ?>
@@ -45,6 +44,7 @@ th { background-color: #1e293b; color: #ffffff; }
 <th>Proveedor</th>
 <th>Usuario Responsable</th>
 <th>Total Invertido</th>
+<th>Estado</th>
 <th>Acciones</th>
 </tr>
 </thead>
@@ -56,13 +56,20 @@ if ($resultado && $resultado->num_rows > 0) {
         echo "<td>" . $fila['numero_factura'] . "</td>";
         echo "<td>" . $fila['fecha'] . "</td>";
         echo "<td>" . htmlspecialchars($fila['proveedor']) . "</td>";
-        echo "<td>" . htmlspecialchars($fila['cajero']) . "</td>";
+        echo "<td>" . htmlspecialchars($fila['usuario']) . "</td>";
         echo "<td class='monto'>$" . number_format($fila['total'], 2) . "</td>";
+        echo "<td>";
+        if ($fila['estado'] === 'COMPLETADA') {
+            echo '<span style="background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ACTIVA</span>';
+        } else {
+            echo '<span style="background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">ANULADA</span>';
+        }
+        echo "</td>";
         echo "<td><a href='detalle_compra.php?id=" . $fila['numero_factura'] . "' style='background: #2563eb; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold;'>Ver Detalle</a></td>";
         echo "</tr>";
     }
 } else {
-    echo "<tr><td colspan='6'>Sin registros de compras disponibles.</td></tr>";
+    echo "<tr><td colspan='7'>Sin registros de compras disponibles.</td></tr>";
 }
 ?>
 </tbody>
